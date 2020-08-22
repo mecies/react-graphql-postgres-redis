@@ -45,7 +45,7 @@ const main = async () => {
       resolvers: [PostResolver, UserResolver],
       validate: false, // will use different validator
     }),
-    context: ({ req, res }): MyContext => ({ em: orm.em, req, res }), // TODO fix
+    context: ({ req, res }: MyContext) => ({ em: orm.em, req, res }), // TODO fix
   });
 
   apolloServer.applyMiddleware({ app });
