@@ -19,6 +19,7 @@ const express_1 = __importDefault(require("express"));
 const redis_1 = __importDefault(require("redis"));
 const express_session_1 = __importDefault(require("express-session"));
 const connect_redis_1 = __importDefault(require("connect-redis"));
+const cors_1 = __importDefault(require("cors"));
 const constants_1 = require("./constants");
 const mikro_orm_config_1 = __importDefault(require("./mikro-orm.config"));
 const apollo_server_express_1 = require("apollo-server-express");
@@ -46,6 +47,10 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         saveUninitialized: false,
         resave: false,
     }));
+    app.use(cors_1.default({
+        origin: "http://localhost:3000",
+        credentials: true,
+    }));
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: yield type_graphql_1.buildSchema({
             resolvers: [post_1.PostResolver, User_1.UserResolver],
@@ -53,7 +58,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         }),
         context: ({ req, res }) => ({ em: orm.em, req, res }),
     });
-    apolloServer.applyMiddleware({ app });
+    apolloServer.applyMiddleware({ app, cors: false });
     app.listen(4000, () => {
         console.log("Listening on localhost:4000");
     });

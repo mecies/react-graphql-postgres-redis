@@ -5,6 +5,7 @@ import express from "express";
 import redis from "redis";
 import session from "express-session";
 import connectRedis from "connect-redis";
+import cors from "cors";
 import { __prod__ } from "./constants";
 import microConfig from "./mikro-orm.config";
 import { ApolloServer } from "apollo-server-express";
@@ -40,6 +41,13 @@ const main = async () => {
     })
   );
 
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
+
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [PostResolver, UserResolver],
@@ -48,7 +56,7 @@ const main = async () => {
     context: ({ req, res }: MyContext) => ({ em: orm.em, req, res }), // TODO fix
   });
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen(4000, () => {
     console.log("Listening on localhost:4000");

@@ -99,13 +99,20 @@ let UserResolver = class UserResolver {
                     ],
                 };
             }
-            const hashedPassowrd = yield argon2_1.default.hash(options.password);
-            const user = em.create(User_1.User, {
-                username: options.username,
-                password: hashedPassowrd,
-            });
+            const hashedPassword = yield argon2_1.default.hash(options.password);
+            let user;
             try {
-                yield em.persistAndFlush(user);
+                const result = yield em
+                    .createQueryBuilder(User_1.User)
+                    .getKnexQuery()
+                    .insert({
+                    username: options.username,
+                    password: hashedPassword,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                    .returning("*");
+                user = result[0];
             }
             catch (err) {
                 if ((err.code = "23505")) {
