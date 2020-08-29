@@ -32,7 +32,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const RedisStore = connect_redis_1.default(express_session_1.default);
     const redisClient = redis_1.default.createClient();
     app.use(express_session_1.default({
-        name: "mecies_qid",
+        name: constants_1.COOKIE_NAME,
         store: new RedisStore({
             client: redisClient,
             disableTouch: true,
